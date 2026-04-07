@@ -16,6 +16,8 @@ type SidebarProps = {
   onCheckUpdates: () => Promise<void>;
   toast: string;
   version: string;
+  width: number;
+  onToggleSidebar: () => void;
 };
 
 export default function Sidebar({
@@ -31,11 +33,22 @@ export default function Sidebar({
   onCheckUpdates,
   toast,
   version,
+  width,
+  onToggleSidebar,
 }: SidebarProps) {
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" style={{ width }}>
       <div className="sidebar-header">
-        <span className="sidebar-title">TradeBoard</span>
+        <div className="sidebar-header-left">
+          <button
+            className="sidebar-btn sidebar-collapse-btn"
+            onClick={onToggleSidebar}
+            title="Toggle sidebar"
+          >
+            <PanelIcon />
+          </button>
+          <span className="sidebar-title">TradeBoard</span>
+        </div>
         <div className="sidebar-actions">
           <button
             className="sidebar-btn"
@@ -307,6 +320,15 @@ function UpdateIcon() {
       <path d="M13.5 8a5.5 5.5 0 01-9.3 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
       <path d="M11 2.5l.8 1.5H10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M5 13.5l-.8-1.5H6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PanelIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M9 3v18" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   );
 }

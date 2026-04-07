@@ -38,10 +38,65 @@ export default function App() {
     const first = findFirstDoc(loadTree());
     return first?.id ?? null;
   });
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const SIDEBAR_DEFAULT = 240;
+  const SIDEBAR_MIN = 180;
+  const SIDEBAR_MAX = 480;
+
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    const saved = localStorage.getItem("tradeboard_sidebar_width");
+    return saved ? Number(saved) : SIDEBAR_DEFAULT;
+  });
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef({ x: 0, width: 0 });
   const editorRef = useRef<Editor | null>(null);
   const activeIdRef = useRef(activeId);
   activeIdRef.current = activeId;
+
+  // Persist sidebar width
+  useEffect(() => {
+    if (!sidebarCollapsed) {
+      localStorage.setItem("tradeboard_sidebar_width", String(sidebarWidth));
+    }
+  }, [sidebarWidth, sidebarCollapsed]);
+
+  // Drag resize handlers
+  const handleDividerMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      const startX = e.clientX;
+      const startWidth = sidebarCollapsed ? 0 : sidebarWidth;
+      dragStartRef.current = { x: startX, width: startWidth };
+      setIsDragging(true);
+
+      let didDrag = false;
+
+      const onMouseMove = (ev: MouseEvent) => {
+        const delta = ev.clientX - startX;
+        if (Math.abs(delta) > 3) didDrag = true;
+        const newWidth = Math.min(SIDEBAR_MAX, Math.max(SIDEBAR_MIN, startWidth + delta));
+        setSidebarWidth(newWidth);
+        setSidebarCollapsed(false);
+      };
+
+      const onMouseUp = () => {
+        setIsDragging(false);
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+        if (!didDrag) {
+          setSidebarCollapsed((c) => !c);
+        }
+      };
+
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    },
+    [sidebarWidth, sidebarCollapsed],
+  );
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed((c) => !c);
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -194,8 +249,15 @@ export default function App() {
   const snapshot = activeId ? loadSnapshot(activeId) : null;
 
   return (
-    <div className="app">
-      <div className={`sidebar-container ${sidebarOpen ? "open" : "closed"}`}>
+    <div className={`app ${isDragging ? "dragging" : ""}`}>
+      <div
+        className={`sidebar-container ${sidebarCollapsed ? "collapsed" : ""}`}
+        style={{
+          width: sidebarCollapsed ? 0 : sidebarWidth,
+          minWidth: sidebarCollapsed ? 0 : sidebarWidth,
+          transition: isDragging ? "none" : undefined,
+        }}
+      >
         <Sidebar
           tree={tree}
           activeId={activeId}
@@ -209,8 +271,14 @@ export default function App() {
           onCheckUpdates={() => checkForUpdates(true)}
           toast={toast}
           version={version}
+          width={sidebarWidth}
+          onToggleSidebar={toggleSidebar}
         />
       </div>
+      <div
+        className={`sidebar-divider ${sidebarCollapsed ? "collapsed" : ""}`}
+        onMouseDown={handleDividerMouseDown}
+      />
       <div className="canvas-container">
         {updateInfo && (
           <div className="update-banner">
@@ -223,13 +291,15 @@ export default function App() {
             </button>
           </div>
         )}
-        <button
-          className="sidebar-toggle"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          title={sidebarOpen ? "Hide sidebar" : "Show sidebar"}
-        >
-          {sidebarOpen ? <PanelLeftClose /> : <PanelLeftOpen />}
-        </button>
+        {sidebarCollapsed && (
+          <button
+            className="sidebar-toggle"
+            onClick={toggleSidebar}
+            title="Show sidebar"
+          >
+            <PanelIcon />
+          </button>
+        )}
         {activeId ? (
           <Tldraw
             key={activeId}
@@ -257,22 +327,11 @@ function findFirstDoc(tree: DocNode[]): DocNode | null {
   return null;
 }
 
-function PanelLeftClose() {
+function PanelIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
       <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
       <path d="M9 3v18" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M16 9l-3 3 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function PanelLeftOpen() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M9 3v18" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M14 9l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

@@ -54,37 +54,91 @@ body,
 
 /* Sidebar */
 .sidebar-container {
-  width: var(--sidebar-width);
-  min-width: var(--sidebar-width);
   height: 100%;
-  transition: width 0.2s ease, min-width 0.2s ease, opacity 0.2s ease;
+  transition: width 0.2s ease, min-width 0.2s ease, opacity 0.15s ease;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
-.sidebar-container.closed {
-  width: 0;
-  min-width: 0;
+.sidebar-container.collapsed {
+  width: 0 !important;
+  min-width: 0 !important;
   opacity: 0;
   pointer-events: none;
 }
 
 .sidebar {
-  width: var(--sidebar-width);
   height: 100%;
   background: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   user-select: none;
   -webkit-user-select: none;
+  overflow: hidden;
+}
+
+/* Drag divider */
+.sidebar-divider {
+  width: 6px;
+  cursor: col-resize;
+  background: transparent;
+  position: relative;
+  flex-shrink: 0;
+  z-index: 10;
+  margin-left: -3px;
+  margin-right: -3px;
+}
+
+.sidebar-divider::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3px;
+  width: 1px;
+  background: var(--border);
+  transition: background 0.15s;
+}
+
+.sidebar-divider:hover::after,
+.app.dragging .sidebar-divider::after {
+  background: #2383e2;
+  width: 2px;
+  left: 2px;
+}
+
+.sidebar-divider.collapsed {
+  cursor: default;
+  width: 0;
+  margin: 0;
+}
+
+.app.dragging {
+  cursor: col-resize;
+}
+
+.app.dragging * {
+  pointer-events: none !important;
 }
 
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 44px 12px 8px;
+  padding: 8px 12px 8px;
+  padding-top: 44px;
   -webkit-app-region: drag;
+}
+
+.sidebar-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  -webkit-app-region: no-drag;
+}
+
+.sidebar-collapse-btn {
+  -webkit-app-region: no-drag;
 }
 
 .sidebar-title {
@@ -249,8 +303,8 @@ body,
 
 .sidebar-toggle {
   position: absolute;
-  top: 44px;
-  left: 8px;
+  top: 10px;
+  left: 80px;
   z-index: 500;
   width: 28px;
   height: 28px;
@@ -258,11 +312,10 @@ body,
   align-items: center;
   justify-content: center;
   border: none;
-  background: var(--bg);
+  background: none;
   color: var(--text-secondary);
   border-radius: 6px;
   cursor: pointer;
-  box-shadow: 0 1px 3px var(--shadow);
   transition: background 0.1s, color 0.1s;
 }
 
