@@ -174,7 +174,15 @@ function TreeNode({
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
-          <span className="tree-label">{node.name}</span>
+          <span
+            className="tree-label"
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              setEditing(true);
+            }}
+          >
+            {node.name}
+          </span>
         )}
       </div>
 
