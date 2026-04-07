@@ -79,14 +79,21 @@ body,
 
 /* Drag divider */
 .sidebar-divider {
-  width: 6px;
+  width: 0;
   cursor: col-resize;
-  background: transparent;
   position: relative;
   flex-shrink: 0;
   z-index: 10;
-  margin-left: -3px;
-  margin-right: -3px;
+}
+
+.sidebar-divider::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -4px;
+  width: 8px;
+  z-index: 1;
 }
 
 .sidebar-divider::after {
@@ -94,23 +101,23 @@ body,
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 3px;
+  left: 0;
   width: 1px;
   background: var(--border);
-  transition: background 0.15s;
+  transition: background 0.15s, width 0.15s;
 }
 
 .sidebar-divider:hover::after,
 .app.dragging .sidebar-divider::after {
   background: #2383e2;
   width: 2px;
-  left: 2px;
+  left: -1px;
 }
 
 .sidebar-divider.collapsed {
   cursor: default;
   width: 0;
-  margin: 0;
+  pointer-events: none;
 }
 
 .app.dragging {
