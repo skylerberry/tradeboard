@@ -13,6 +13,7 @@ type SidebarProps = {
   onRename: (id: string, name: string) => void;
   onDelete: (id: string) => void;
   onToggleTheme: () => void;
+  onCheckUpdates: () => void;
 };
 
 export default function Sidebar({
@@ -25,6 +26,7 @@ export default function Sidebar({
   onRename,
   onDelete,
   onToggleTheme,
+  onCheckUpdates,
 }: SidebarProps) {
   return (
     <aside className="sidebar">
@@ -64,7 +66,14 @@ export default function Sidebar({
       </nav>
       <div className="sidebar-footer">
         <button
-          className="sidebar-btn theme-toggle"
+          className="sidebar-btn"
+          onClick={onCheckUpdates}
+          title="Check for updates"
+        >
+          <UpdateIcon />
+        </button>
+        <button
+          className="sidebar-btn"
           onClick={onToggleTheme}
           title={theme === "light" ? "Dark mode" : "Light mode"}
         >
@@ -249,6 +258,17 @@ function DocPlusIcon() {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path d="M4 2h5l4 4v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2" />
       <path d="M8 7v4M6 9h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function UpdateIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M2.5 8a5.5 5.5 0 019.3-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M13.5 8a5.5 5.5 0 01-9.3 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M11 2.5l.8 1.5H10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 13.5l-.8-1.5H6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

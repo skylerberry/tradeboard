@@ -179,6 +179,7 @@ export default function App() {
           onRename={handleRename}
           onDelete={handleDelete}
           onToggleTheme={toggleTheme}
+          onCheckUpdates={() => checkForUpdates(true)}
         />
       </div>
       <div className="canvas-container">
