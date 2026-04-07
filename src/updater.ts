@@ -37,7 +37,7 @@ export async function checkForUpdates(manual = false) {
 
   if (!update) {
     if (manual) {
-      showToast("You're on the latest version.");
+      showToast("You're on the latest version. ✓");
     } else {
       showToast("");
     }
