@@ -1,4 +1,4 @@
-use tauri::menu::{MenuBuilder, MenuItemBuilder, SubmenuBuilder};
+use tauri::menu::{AboutMetadataBuilder, MenuBuilder, MenuItemBuilder, SubmenuBuilder};
 use tauri::Emitter;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -19,8 +19,18 @@ pub fn run() {
         .id("check_updates")
         .build(app)?;
 
+      let about_metadata = AboutMetadataBuilder::new()
+        .name(Some("TradeBoard"))
+        .build();
+
       let app_submenu = SubmenuBuilder::new(app, "TradeBoard")
+        .about(Some(about_metadata))
+        .separator()
         .item(&check_updates)
+        .separator()
+        .hide()
+        .hide_others()
+        .show_all()
         .separator()
         .quit()
         .build()?;
@@ -35,9 +45,18 @@ pub fn run() {
         .select_all()
         .build()?;
 
+      let window_submenu = SubmenuBuilder::new(app, "Window")
+        .minimize()
+        .maximize()
+        .close_window()
+        .separator()
+        .fullscreen()
+        .build()?;
+
       let menu = MenuBuilder::new(app)
         .item(&app_submenu)
         .item(&edit_submenu)
+        .item(&window_submenu)
         .build()?;
 
       app.set_menu(menu)?;

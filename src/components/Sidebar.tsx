@@ -15,6 +15,7 @@ type SidebarProps = {
   onToggleTheme: () => void;
   onCheckUpdates: () => Promise<void>;
   toast: string;
+  version: string;
 };
 
 export default function Sidebar({
@@ -29,6 +30,7 @@ export default function Sidebar({
   onToggleTheme,
   onCheckUpdates,
   toast,
+  version,
 }: SidebarProps) {
   return (
     <aside className="sidebar">
@@ -67,7 +69,11 @@ export default function Sidebar({
         ))}
       </nav>
       <div className="sidebar-footer">
-        {toast && <span className="sidebar-toast">{toast}</span>}
+        {toast ? (
+          <span className="sidebar-toast">{toast}</span>
+        ) : (
+          <span className="sidebar-version">v{version}</span>
+        )}
         <div className="sidebar-footer-actions">
           <UpdateButton onCheckUpdates={onCheckUpdates} />
           <button

@@ -2,8 +2,9 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { Tldraw, Editor } from "tldraw";
 import "tldraw/tldraw.css";
 import Sidebar from "./components/Sidebar";
-import { checkForUpdates, onToast } from "./updater";
+import { checkForUpdates, onToast, onUpdatePrompt } from "./updater";
 import { listen } from "@tauri-apps/api/event";
+import { getVersion } from "@tauri-apps/api/app";
 import {
   DocNode,
   loadTree,
@@ -52,13 +53,26 @@ export default function App() {
   }, []);
 
   const [toast, setToast] = useState("");
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    getVersion().then(setVersion);
+  }, []);
+
+  const [updateInfo, setUpdateInfo] = useState<{
+    version: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   useEffect(() => {
     onToast((msg) => {
       setToast(msg);
-      if (msg && !msg.includes("Downloading") && !msg.includes("Checking")) {
+      if (msg && !msg.includes("Downloading") && !msg.includes("Checking") && !msg.includes("Restarting")) {
         setTimeout(() => setToast(""), 3000);
       }
+    });
+    onUpdatePrompt((ver, onConfirm) => {
+      setUpdateInfo({ version: ver, onConfirm });
     });
     checkForUpdates();
     const unlisten = listen("menu-check-updates", () => {
@@ -194,9 +208,21 @@ export default function App() {
           onToggleTheme={toggleTheme}
           onCheckUpdates={() => checkForUpdates(true)}
           toast={toast}
+          version={version}
         />
       </div>
       <div className="canvas-container">
+        {updateInfo && (
+          <div className="update-banner">
+            <span>TradeBoard {updateInfo.version} is available</span>
+            <button onClick={() => { setUpdateInfo(null); updateInfo.onConfirm(); }}>
+              Update now
+            </button>
+            <button className="dismiss" onClick={() => setUpdateInfo(null)}>
+              Later
+            </button>
+          </div>
+        )}
         <button
           className="sidebar-toggle"
           onClick={() => setSidebarOpen(!sidebarOpen)}
