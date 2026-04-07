@@ -1,5 +1,6 @@
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { getVersion } from "@tauri-apps/api/app";
 
 type ToastCallback = (msg: string) => void;
 type PromptCallback = (version: string, onConfirm: () => void) => void;
@@ -22,29 +23,22 @@ function showToast(msg: string) {
 export async function checkForUpdates(manual = false) {
   let update: Update | null = null;
   try {
-    showToast("Checking for updates...");
+    const currentVersion = await getVersion();
+    showToast(`Checking... (current: ${currentVersion})`);
     update = await check();
+    if (update) {
+      showToast(`Found update: ${update.version}`);
+    } else {
+      showToast(manual ? `v${currentVersion} is the latest.` : "");
+    }
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
     console.error("Update check failed:", msg);
-    if (manual) {
-      showToast(`Update failed: ${msg}`);
-    } else {
-      showToast("");
-    }
+    showToast(manual ? `Update failed: ${msg}` : "");
     return;
   }
 
-  if (!update) {
-    if (manual) {
-      showToast("You're on the latest version. ✓");
-    } else {
-      showToast("");
-    }
-    return;
-  }
-
-  showToast("");
+  if (!update) return;
 
   const doUpdate = async () => {
     try {
