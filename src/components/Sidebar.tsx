@@ -14,6 +14,7 @@ type SidebarProps = {
   onDelete: (id: string) => void;
   onToggleTheme: () => void;
   onCheckUpdates: () => Promise<void>;
+  toast: string;
 };
 
 export default function Sidebar({
@@ -27,6 +28,7 @@ export default function Sidebar({
   onDelete,
   onToggleTheme,
   onCheckUpdates,
+  toast,
 }: SidebarProps) {
   return (
     <aside className="sidebar">
@@ -65,14 +67,17 @@ export default function Sidebar({
         ))}
       </nav>
       <div className="sidebar-footer">
-        <UpdateButton onCheckUpdates={onCheckUpdates} />
-        <button
-          className="sidebar-btn"
-          onClick={onToggleTheme}
-          title={theme === "light" ? "Dark mode" : "Light mode"}
-        >
-          {theme === "light" ? <MoonIcon /> : <SunIcon />}
-        </button>
+        {toast && <span className="sidebar-toast">{toast}</span>}
+        <div className="sidebar-footer-actions">
+          <UpdateButton onCheckUpdates={onCheckUpdates} />
+          <button
+            className="sidebar-btn"
+            onClick={onToggleTheme}
+            title={theme === "light" ? "Dark mode" : "Light mode"}
+          >
+            {theme === "light" ? <MoonIcon /> : <SunIcon />}
+          </button>
+        </div>
       </div>
     </aside>
   );

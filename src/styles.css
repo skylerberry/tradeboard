@@ -283,10 +283,24 @@ body,
 /* Sidebar footer */
 .sidebar-footer {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  flex-direction: column;
+  gap: 6px;
   padding: 8px 12px;
   border-top: 1px solid var(--border);
+}
+
+.sidebar-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.sidebar-toast {
+  font-size: 11px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Make tldraw fill the container */

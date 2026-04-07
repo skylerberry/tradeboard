@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { Tldraw, Editor } from "tldraw";
 import "tldraw/tldraw.css";
 import Sidebar from "./components/Sidebar";
-import { checkForUpdates } from "./updater";
+import { checkForUpdates, onToast } from "./updater";
 import { listen } from "@tauri-apps/api/event";
 import {
   DocNode,
@@ -51,7 +51,15 @@ export default function App() {
     setTheme((t) => (t === "light" ? "dark" : "light"));
   }, []);
 
+  const [toast, setToast] = useState("");
+
   useEffect(() => {
+    onToast((msg) => {
+      setToast(msg);
+      if (msg && !msg.includes("Downloading") && !msg.includes("Checking")) {
+        setTimeout(() => setToast(""), 3000);
+      }
+    });
     checkForUpdates();
     const unlisten = listen("menu-check-updates", () => {
       checkForUpdates(true);
@@ -185,6 +193,7 @@ export default function App() {
           onDelete={handleDelete}
           onToggleTheme={toggleTheme}
           onCheckUpdates={() => checkForUpdates(true)}
+          toast={toast}
         />
       </div>
       <div className="canvas-container">
