@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { Tldraw, Editor } from "tldraw";
 import "tldraw/tldraw.css";
 import Sidebar from "./components/Sidebar";
+import { checkForUpdates } from "./updater";
 import {
   DocNode,
   loadTree,
@@ -47,6 +48,10 @@ export default function App() {
 
   const toggleTheme = useCallback(() => {
     setTheme((t) => (t === "light" ? "dark" : "light"));
+  }, []);
+
+  useEffect(() => {
+    checkForUpdates();
   }, []);
 
   const persistTree = useCallback((next: DocNode[]) => {
