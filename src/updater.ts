@@ -15,10 +15,11 @@ export async function checkForUpdates(manual = false) {
     } else if (manual) {
       window.alert("You're on the latest version.");
     }
-  } catch (e) {
-    console.error("Update check failed:", e);
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("Update check failed:", msg);
     if (manual) {
-      window.alert("Could not check for updates. Are you online?");
+      window.alert(`Update check failed:\n${msg}`);
     }
   }
 }
