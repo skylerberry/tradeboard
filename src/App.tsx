@@ -3,6 +3,7 @@ import { Tldraw, Editor } from "tldraw";
 import "tldraw/tldraw.css";
 import Sidebar from "./components/Sidebar";
 import { checkForUpdates } from "./updater";
+import { listen } from "@tauri-apps/api/event";
 import {
   DocNode,
   loadTree,
@@ -52,6 +53,10 @@ export default function App() {
 
   useEffect(() => {
     checkForUpdates();
+    const unlisten = listen("menu-check-updates", () => {
+      checkForUpdates(true);
+    });
+    return () => { unlisten.then((fn) => fn()); };
   }, []);
 
   const persistTree = useCallback((next: DocNode[]) => {

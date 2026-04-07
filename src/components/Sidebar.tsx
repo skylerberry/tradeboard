@@ -13,7 +13,7 @@ type SidebarProps = {
   onRename: (id: string, name: string) => void;
   onDelete: (id: string) => void;
   onToggleTheme: () => void;
-  onCheckUpdates: () => void;
+  onCheckUpdates: () => Promise<void>;
 };
 
 export default function Sidebar({
@@ -65,13 +65,7 @@ export default function Sidebar({
         ))}
       </nav>
       <div className="sidebar-footer">
-        <button
-          className="sidebar-btn"
-          onClick={onCheckUpdates}
-          title="Check for updates"
-        >
-          <UpdateIcon />
-        </button>
+        <UpdateButton onCheckUpdates={onCheckUpdates} />
         <button
           className="sidebar-btn"
           onClick={onToggleTheme}
@@ -267,6 +261,31 @@ function DocPlusIcon() {
       <path d="M4 2h5l4 4v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2" />
       <path d="M8 7v4M6 9h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function UpdateButton({ onCheckUpdates }: { onCheckUpdates: () => Promise<void> }) {
+  const [checking, setChecking] = useState(false);
+
+  const handleClick = async () => {
+    if (checking) return;
+    setChecking(true);
+    try {
+      await onCheckUpdates();
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  return (
+    <button
+      className={`sidebar-btn ${checking ? "spin" : ""}`}
+      onClick={handleClick}
+      title="Check for updates"
+      disabled={checking}
+    >
+      <UpdateIcon />
+    </button>
   );
 }
 
