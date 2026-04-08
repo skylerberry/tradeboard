@@ -40,17 +40,17 @@ export default function Sidebar({
 }: SidebarProps) {
   return (
     <aside className="sidebar" style={{ width }}>
+      <div className="sidebar-titlebar">
+        <button
+          className="sidebar-btn sidebar-collapse-btn"
+          onClick={onToggleSidebar}
+          title="Toggle sidebar"
+        >
+          <PanelIcon />
+        </button>
+      </div>
       <div className="sidebar-header">
-        <div className="sidebar-header-left">
-          <button
-            className="sidebar-btn sidebar-collapse-btn"
-            onClick={onToggleSidebar}
-            title="Toggle sidebar"
-          >
-            <PanelIcon />
-          </button>
-          <span className="sidebar-title">TradeBoard</span>
-        </div>
+        <span className="sidebar-title">TradeBoard</span>
         <div className="sidebar-actions">
           <button
             className="sidebar-btn"
