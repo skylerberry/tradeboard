@@ -8,6 +8,7 @@ import CustomToolbar from "./components/CustomToolbar";
 import { checkForUpdates, onToast, onUpdatePrompt } from "./updater";
 import { listen } from "@tauri-apps/api/event";
 import { getVersion } from "@tauri-apps/api/app";
+import { fetchTree, pushTree, pushSnapshot, fetchSnapshot } from "./sync";
 import {
   DocNode,
   loadTree,
@@ -119,6 +120,13 @@ export default function App() {
 
   useEffect(() => {
     getVersion().then(setVersion);
+    // Pull from cloud on launch
+    fetchTree().then(({ tree: remoteTree }) => {
+      if (remoteTree) {
+        setTree(remoteTree as DocNode[]);
+        saveTree(remoteTree as DocNode[]);
+      }
+    }).catch(() => {});
   }, []);
 
   const [updateInfo, setUpdateInfo] = useState<{
@@ -148,6 +156,7 @@ export default function App() {
   const persistTree = useCallback((next: DocNode[]) => {
     setTree(next);
     saveTree(next);
+    pushTree(next).catch(() => {});
   }, []);
 
   const saveCurrentSnapshot = useCallback(() => {
@@ -156,6 +165,7 @@ export default function App() {
     if (editor && id) {
       const snapshot = editor.getSnapshot();
       saveSnapshot(id, snapshot);
+      pushSnapshot(id, snapshot).catch(() => {});
     }
   }, []);
 

@@ -69,22 +69,16 @@ export default function Sidebar({
         </div>
       </div>
       <SearchBar tree={tree} onSelect={onSelect} />
-      <nav className="sidebar-tree">
-        {tree.map((node) => (
-          <TreeNode
-            key={node.id}
-            node={node}
-            depth={0}
-            activeId={activeId}
-            onSelect={onSelect}
-            onNewFolder={onNewFolder}
-            onNewDocument={onNewDocument}
-            onRename={onRename}
-            onDelete={onDelete}
-            onMove={onMove}
-          />
-        ))}
-      </nav>
+      <SidebarTree
+        tree={tree}
+        activeId={activeId}
+        onSelect={onSelect}
+        onNewFolder={onNewFolder}
+        onNewDocument={onNewDocument}
+        onRename={onRename}
+        onDelete={onDelete}
+        onMove={onMove}
+      />
       <div className="sidebar-footer">
         {toast ? (
           <span className="sidebar-toast">{toast}</span>
@@ -103,6 +97,73 @@ export default function Sidebar({
         </div>
       </div>
     </aside>
+  );
+}
+
+function SidebarTree({
+  tree,
+  activeId,
+  onSelect,
+  onNewFolder,
+  onNewDocument,
+  onRename,
+  onDelete,
+  onMove,
+}: {
+  tree: DocNode[];
+  activeId: string | null;
+  onSelect: (id: string) => void;
+  onNewFolder: (parentId: string | null) => void;
+  onNewDocument: (parentId: string | null) => void;
+  onRename: (id: string, name: string) => void;
+  onDelete: (id: string) => void;
+  onMove: (dragId: string, targetId: string, position: "before" | "after" | "inside") => void;
+}) {
+  const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    if (!ctxMenu) return;
+    const close = () => setCtxMenu(null);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [ctxMenu]);
+
+  return (
+    <>
+      <nav
+        className="sidebar-tree"
+        onContextMenu={(e) => {
+          if ((e.target as HTMLElement).closest(".tree-item")) return;
+          e.preventDefault();
+          setCtxMenu({ x: e.clientX, y: e.clientY });
+        }}
+      >
+        {tree.map((node) => (
+          <TreeNode
+            key={node.id}
+            node={node}
+            depth={0}
+            activeId={activeId}
+            onSelect={onSelect}
+            onNewFolder={onNewFolder}
+            onNewDocument={onNewDocument}
+            onRename={onRename}
+            onDelete={onDelete}
+            onMove={onMove}
+          />
+        ))}
+      </nav>
+      {ctxMenu && (
+        <div className="context-menu" style={{ top: ctxMenu.y, left: ctxMenu.x }}>
+          <button onClick={() => { onNewFolder(null); setCtxMenu(null); }}>
+            New folder
+          </button>
+          <button onClick={() => { onNewDocument(null); setCtxMenu(null); }}>
+            New document
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -376,7 +437,12 @@ function TreeNode({
               </button>
             </>
           )}
-          <button className="danger" onClick={() => { onDelete(node.id); setContextMenu(null); }}>
+          <button className="danger" onClick={() => {
+            setContextMenu(null);
+            if (window.confirm(`Delete "${node.name}"?`)) {
+              onDelete(node.id);
+            }
+          }}>
             Delete
           </button>
         </div>

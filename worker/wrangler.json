@@ -1,0 +1,18 @@
+{
+  "name": "tradeboard-sync",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-12-01",
+  "r2_buckets": [
+    {
+      "binding": "SNAPSHOTS",
+      "bucket_name": "tradeboard-snapshots"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "META",
+      "database_name": "tradeboard-meta",
+      "database_id": "47ab5dcb-4816-4a5e-b200-b35255c6ec04"
+    }
+  ]
+}
