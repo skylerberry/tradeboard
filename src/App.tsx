@@ -246,17 +246,28 @@ export default function App() {
     editorRef.current?.user.updateUserPreferences({ colorScheme: theme });
   }, [theme]);
 
+  const sidebarCollapsedRef = useRef(sidebarCollapsed);
+  sidebarCollapsedRef.current = sidebarCollapsed;
+  const toggleSidebarRef = useRef(toggleSidebar);
+  toggleSidebarRef.current = toggleSidebar;
+
   const tldrawComponents = useMemo(
     () => ({
       MenuPanel: () => (
-        <CustomMenuPanel collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+        <CustomMenuPanel
+          collapsedRef={sidebarCollapsedRef}
+          toggleRef={toggleSidebarRef}
+        />
       ),
     }),
-    [sidebarCollapsed, toggleSidebar],
+    [],
   );
 
-  // Load snapshot for active document
-  const snapshot = activeId ? loadSnapshot(activeId) : null;
+  // Load snapshot for active document — memoized to avoid tldraw re-renders
+  const snapshot = useMemo(
+    () => (activeId ? loadSnapshot(activeId) : null),
+    [activeId],
+  );
 
   return (
     <div className={`app ${isDragging ? "dragging" : ""}`}>

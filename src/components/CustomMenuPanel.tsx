@@ -1,18 +1,30 @@
 import { DefaultMenuPanel } from "tldraw";
+import { useEffect, useState, type RefObject } from "react";
 
 export default function CustomMenuPanel({
-  collapsed,
-  onToggle,
+  collapsedRef,
+  toggleRef,
 }: {
-  collapsed: boolean;
-  onToggle: () => void;
+  collapsedRef: RefObject<boolean>;
+  toggleRef: RefObject<() => void>;
 }) {
+  const [collapsed, setCollapsed] = useState(collapsedRef.current);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (collapsedRef.current !== collapsed) {
+        setCollapsed(collapsedRef.current);
+      }
+    }, 50);
+    return () => clearInterval(interval);
+  });
+
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       {collapsed && (
         <button
           className="sidebar-btn sidebar-toggle-inline"
-          onClick={onToggle}
+          onClick={() => toggleRef.current()}
           title="Show sidebar"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
