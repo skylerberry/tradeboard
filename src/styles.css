@@ -405,6 +405,12 @@ body,
   padding-left: 0 !important;
 }
 
+/* Hide tldraw license watermark */
+.tlui-layout__bottom__right .tlui-menu-zone__controls,
+a[href*="tldraw.dev"] {
+  display: none !important;
+}
+
 /* Make tldraw fill the container */
 .canvas-container .tl-container {
   position: absolute !important;
