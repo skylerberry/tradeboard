@@ -312,6 +312,7 @@ body,
 .sidebar-toggle-inline {
   width: 32px;
   height: 32px;
+  margin-left: 72px;
   margin-right: 4px;
 }
 
