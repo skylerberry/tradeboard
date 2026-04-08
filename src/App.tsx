@@ -4,6 +4,7 @@ import "tldraw/tldraw.css";
 import Sidebar from "./components/Sidebar";
 import CustomMenuPanel from "./components/CustomMenuPanel";
 import CustomContextMenu from "./components/CustomContextMenu";
+import CustomToolbar from "./components/CustomToolbar";
 import { checkForUpdates, onToast, onUpdatePrompt } from "./updater";
 import { listen } from "@tauri-apps/api/event";
 import { getVersion } from "@tauri-apps/api/app";
@@ -19,6 +20,7 @@ import {
   createDocument,
   findNode,
   findParent,
+  moveNode,
 } from "./store";
 
 type Theme = "light" | "dark";
@@ -234,6 +236,14 @@ export default function App() {
     [tree, activeId, persistTree],
   );
 
+  const handleMove = useCallback(
+    (dragId: string, targetId: string, position: "before" | "after" | "inside") => {
+      const next = moveNode(tree, dragId, targetId, position);
+      persistTree(next);
+    },
+    [tree, persistTree],
+  );
+
   const handleMount = useCallback(
     (editor: Editor) => {
       editorRef.current = editor;
@@ -261,6 +271,7 @@ export default function App() {
         />
       ),
       ContextMenu: CustomContextMenu,
+      Toolbar: CustomToolbar,
     }),
     [],
   );
@@ -296,6 +307,7 @@ export default function App() {
           version={version}
           width={sidebarWidth}
           onToggleSidebar={toggleSidebar}
+          onMove={handleMove}
         />
       </div>
       <div

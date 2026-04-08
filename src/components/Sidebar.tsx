@@ -18,6 +18,7 @@ type SidebarProps = {
   version: string;
   width: number;
   onToggleSidebar: () => void;
+  onMove: (dragId: string, targetId: string, position: "before" | "after" | "inside") => void;
 };
 
 export default function Sidebar({
@@ -35,6 +36,7 @@ export default function Sidebar({
   version,
   width,
   onToggleSidebar,
+  onMove,
 }: SidebarProps) {
   return (
     <aside className="sidebar" style={{ width }}>
@@ -66,6 +68,7 @@ export default function Sidebar({
           </button>
         </div>
       </div>
+      <SearchBar tree={tree} onSelect={onSelect} />
       <nav className="sidebar-tree">
         {tree.map((node) => (
           <TreeNode
@@ -78,6 +81,7 @@ export default function Sidebar({
             onNewDocument={onNewDocument}
             onRename={onRename}
             onDelete={onDelete}
+            onMove={onMove}
           />
         ))}
       </nav>
@@ -102,6 +106,88 @@ export default function Sidebar({
   );
 }
 
+function flattenTree(nodes: DocNode[]): DocNode[] {
+  const result: DocNode[] = [];
+  for (const node of nodes) {
+    result.push(node);
+    if (node.children) result.push(...flattenTree(node.children));
+  }
+  return result;
+}
+
+function fuzzyMatch(text: string, query: string): boolean {
+  const lower = text.toLowerCase();
+  const q = query.toLowerCase();
+  let qi = 0;
+  for (let i = 0; i < lower.length && qi < q.length; i++) {
+    if (lower[i] === q[qi]) qi++;
+  }
+  return qi === q.length;
+}
+
+function SearchBar({
+  tree,
+  onSelect,
+}: {
+  tree: DocNode[];
+  onSelect: (id: string) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const [focused, setFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const results = query.length > 0
+    ? flattenTree(tree).filter((n) => fuzzyMatch(n.name, query))
+    : [];
+
+  return (
+    <div className="sidebar-search">
+      <input
+        ref={inputRef}
+        className="sidebar-search-input"
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setTimeout(() => setFocused(false), 150)}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            setQuery("");
+            inputRef.current?.blur();
+          }
+        }}
+      />
+      {focused && results.length > 0 && (
+        <div className="sidebar-search-results">
+          {results.map((node) => (
+            <button
+              key={node.id}
+              className="sidebar-search-result"
+              onMouseDown={() => {
+                onSelect(node.id);
+                setQuery("");
+              }}
+            >
+              <span className="tree-icon">
+                {node.type === "folder" ? <FolderIcon /> : <DocIcon />}
+              </span>
+              {node.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FolderIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M2 4h4l1.5 1.5H14v8H2V4z" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
 function TreeNode({
   node,
   depth,
@@ -111,6 +197,7 @@ function TreeNode({
   onNewDocument,
   onRename,
   onDelete,
+  onMove,
 }: {
   node: DocNode;
   depth: number;
@@ -120,14 +207,17 @@ function TreeNode({
   onNewDocument: (parentId: string | null) => void;
   onRename: (id: string, name: string) => void;
   onDelete: (id: string) => void;
+  onMove: (dragId: string, targetId: string, position: "before" | "after" | "inside") => void;
 }) {
   const [expanded, setExpanded] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [dropPosition, setDropPosition] = useState<"before" | "after" | "inside" | null>(null);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
   } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const itemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (editing && inputRef.current) {
@@ -168,13 +258,51 @@ function TreeNode({
     }
   };
 
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData("text/plain", node.id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    const rect = itemRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const y = e.clientY - rect.top;
+    const ratio = y / rect.height;
+    if (isFolder && ratio > 0.25 && ratio < 0.75) {
+      setDropPosition("inside");
+    } else if (ratio < 0.5) {
+      setDropPosition("before");
+    } else {
+      setDropPosition("after");
+    }
+  };
+
+  const handleDragLeave = () => setDropPosition(null);
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const dragId = e.dataTransfer.getData("text/plain");
+    if (dragId && dragId !== node.id && dropPosition) {
+      onMove(dragId, node.id, dropPosition);
+    }
+    setDropPosition(null);
+  };
+
   return (
     <>
       <div
-        className={`tree-item ${isActive ? "active" : ""}`}
+        ref={itemRef}
+        className={`tree-item ${isActive ? "active" : ""} ${dropPosition ? `drop-${dropPosition}` : ""}`}
         style={{ paddingLeft: 12 + depth * 16 }}
         onClick={handleClick}
         onContextMenu={handleContextMenu}
+        draggable={!editing}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
         <span className="tree-icon">
           {isFolder ? (expanded ? <ChevronDown /> : <ChevronRight />) : <DocIcon />}
@@ -239,6 +367,7 @@ function TreeNode({
           onNewDocument={onNewDocument}
           onRename={onRename}
           onDelete={onDelete}
+          onMove={onMove}
         />
       ))}
     </>

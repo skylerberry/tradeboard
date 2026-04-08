@@ -89,3 +89,51 @@ export function findParent(
   }
   return null;
 }
+
+function isDescendant(node: DocNode, id: string): boolean {
+  if (node.id === id) return true;
+  if (node.children) {
+    return node.children.some((c) => isDescendant(c, id));
+  }
+  return false;
+}
+
+export function moveNode(
+  tree: DocNode[],
+  dragId: string,
+  targetId: string,
+  position: "before" | "after" | "inside",
+): DocNode[] {
+  const next = structuredClone(tree);
+  const dragNode = findNode(next, dragId);
+  if (!dragNode) return tree;
+
+  // Prevent dropping a folder into itself
+  if (dragNode.type === "folder" && isDescendant(dragNode, targetId)) return tree;
+
+  // Remove from old position
+  const oldParent = findParent(next, dragId);
+  if (oldParent) {
+    const idx = oldParent.findIndex((n) => n.id === dragId);
+    if (idx !== -1) oldParent.splice(idx, 1);
+  }
+
+  if (position === "inside") {
+    const target = findNode(next, targetId);
+    if (target && target.type === "folder") {
+      target.children = target.children || [];
+      target.children.push(dragNode);
+    }
+  } else {
+    const targetParent = findParent(next, targetId);
+    if (targetParent) {
+      const idx = targetParent.findIndex((n) => n.id === targetId);
+      if (idx !== -1) {
+        const insertIdx = position === "after" ? idx + 1 : idx;
+        targetParent.splice(insertIdx, 0, dragNode);
+      }
+    }
+  }
+
+  return next;
+}
