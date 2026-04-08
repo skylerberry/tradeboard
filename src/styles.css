@@ -378,6 +378,13 @@ body,
   background: var(--danger-bg);
 }
 
+.delete-confirm-label {
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--danger);
+  font-weight: 500;
+}
+
 /* Canvas */
 .canvas-container {
   flex: 1;

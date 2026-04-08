@@ -437,14 +437,11 @@ function TreeNode({
               </button>
             </>
           )}
-          <button className="danger" onClick={() => {
-            setContextMenu(null);
-            if (window.confirm(`Delete "${node.name}"?`)) {
-              onDelete(node.id);
-            }
-          }}>
-            Delete
-          </button>
+          <DeleteButton
+            name={node.name}
+            onConfirm={() => { setContextMenu(null); onDelete(node.id); }}
+            onCancel={() => setContextMenu(null)}
+          />
         </div>
       )}
 
@@ -542,6 +539,34 @@ function UpdateIcon() {
       <path d="M11 2.5l.8 1.5H10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M5 13.5l-.8-1.5H6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+function DeleteButton({
+  name,
+  onConfirm,
+  onCancel,
+}: {
+  name: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+
+  if (confirming) {
+    return (
+      <>
+        <div className="delete-confirm-label">Delete "{name}"?</div>
+        <button className="danger" onClick={onConfirm}>Yes</button>
+        <button onClick={() => { setConfirming(false); onCancel(); }}>No</button>
+      </>
+    );
+  }
+
+  return (
+    <button className="danger" onClick={() => setConfirming(true)}>
+      Delete
+    </button>
   );
 }
 
