@@ -129,15 +129,16 @@ body,
 }
 
 .sidebar-titlebar {
-  height: 38px;
-  display: flex;
-  align-items: flex-end;
-  padding: 0 12px 4px 76px;
+  height: 40px;
+  position: relative;
   -webkit-app-region: drag;
 }
 
 .sidebar-collapse-btn {
   -webkit-app-region: no-drag;
+  position: absolute;
+  top: 10px;
+  left: 78px;
 }
 
 .sidebar-header {
