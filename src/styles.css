@@ -400,6 +400,11 @@ body,
 }
 
 
+/* Align tldraw top-left panel flush with sidebar divider */
+.canvas-container .tlui-layout__top__left {
+  padding-left: 0 !important;
+}
+
 /* Make tldraw fill the container */
 .canvas-container .tl-container {
   position: absolute !important;
