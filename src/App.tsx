@@ -3,6 +3,7 @@ import { Tldraw, Editor } from "tldraw";
 import "tldraw/tldraw.css";
 import Sidebar from "./components/Sidebar";
 import CustomMenuPanel from "./components/CustomMenuPanel";
+import CustomContextMenu from "./components/CustomContextMenu";
 import { checkForUpdates, onToast, onUpdatePrompt } from "./updater";
 import { listen } from "@tauri-apps/api/event";
 import { getVersion } from "@tauri-apps/api/app";
@@ -259,6 +260,7 @@ export default function App() {
           toggleRef={toggleSidebarRef}
         />
       ),
+      ContextMenu: CustomContextMenu,
     }),
     [],
   );
