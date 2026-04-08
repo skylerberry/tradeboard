@@ -308,28 +308,11 @@ body,
   height: 100%;
 }
 
-.sidebar-toggle {
-  position: absolute;
-  top: 92px;
-  left: 8px;
-  z-index: 500;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: var(--bg);
-  color: var(--text-secondary);
-  border-radius: 6px;
-  cursor: pointer;
-  box-shadow: 0 1px 3px var(--shadow);
-  transition: background 0.1s, color 0.1s;
-}
-
-.sidebar-toggle:hover {
-  background: var(--bg-hover);
-  color: var(--text);
+/* Inline toggle in tldraw menu panel */
+.sidebar-toggle-inline {
+  width: 32px;
+  height: 32px;
+  margin-right: 4px;
 }
 
 .empty-state {
@@ -411,10 +394,6 @@ body,
   background: var(--bg-hover);
 }
 
-/* When sidebar collapsed, pad tldraw left so it clears traffic lights */
-.canvas-container.sidebar-collapsed {
-  padding-left: 72px;
-}
 
 /* Make tldraw fill the container */
 .canvas-container .tl-container {
@@ -422,6 +401,3 @@ body,
   inset: 0 !important;
 }
 
-.canvas-container.sidebar-collapsed .tl-container {
-  left: 72px !important;
-}

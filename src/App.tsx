@@ -1,7 +1,8 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { Tldraw, Editor } from "tldraw";
 import "tldraw/tldraw.css";
 import Sidebar from "./components/Sidebar";
+import CustomMenuPanel from "./components/CustomMenuPanel";
 import { checkForUpdates, onToast, onUpdatePrompt } from "./updater";
 import { listen } from "@tauri-apps/api/event";
 import { getVersion } from "@tauri-apps/api/app";
@@ -245,6 +246,15 @@ export default function App() {
     editorRef.current?.user.updateUserPreferences({ colorScheme: theme });
   }, [theme]);
 
+  const tldrawComponents = useMemo(
+    () => ({
+      MenuPanel: () => (
+        <CustomMenuPanel collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+      ),
+    }),
+    [sidebarCollapsed, toggleSidebar],
+  );
+
   // Load snapshot for active document
   const snapshot = activeId ? loadSnapshot(activeId) : null;
 
@@ -279,7 +289,7 @@ export default function App() {
         className={`sidebar-divider ${sidebarCollapsed ? "collapsed" : ""}`}
         onMouseDown={handleDividerMouseDown}
       />
-      <div className={`canvas-container ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+      <div className="canvas-container">
         {updateInfo && (
           <div className="update-banner">
             <span>TradeBoard {updateInfo.version} is available</span>
@@ -291,20 +301,12 @@ export default function App() {
             </button>
           </div>
         )}
-        {sidebarCollapsed && (
-          <button
-            className="sidebar-toggle"
-            onClick={toggleSidebar}
-            title="Show sidebar"
-          >
-            <PanelIcon />
-          </button>
-        )}
         {activeId ? (
           <Tldraw
             key={activeId}
             onMount={handleMount}
             snapshot={snapshot ?? undefined}
+            components={tldrawComponents}
           />
         ) : (
           <div className="empty-state">
@@ -327,11 +329,3 @@ function findFirstDoc(tree: DocNode[]): DocNode | null {
   return null;
 }
 
-function PanelIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M9 3v18" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
