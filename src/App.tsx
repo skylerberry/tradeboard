@@ -326,6 +326,11 @@ export default function App() {
             </button>
           </div>
         )}
+        {sidebarCollapsed && toast && !updateInfo && (
+          <div className="update-banner toast-banner">
+            <span>{toast}</span>
+          </div>
+        )}
         {activeId ? (
           <Tldraw
             key={activeId}
