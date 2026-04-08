@@ -485,6 +485,12 @@ body,
 }
 
 
+/* Hide fill style picker */
+[data-testid="style.fill"],
+.tlui-style-panel [class*="fill"] {
+  display: none !important;
+}
+
 /* Align tldraw top-left panel flush with sidebar divider */
 .canvas-container .tlui-layout__top__left {
   padding-left: 0 !important;
