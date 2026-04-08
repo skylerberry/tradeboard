@@ -136,13 +136,14 @@ function SearchBar({
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Press "/" anywhere to focus search (won't conflict with tldraw tools)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (document.activeElement === inputRef.current) return;
-      const tag = (document.activeElement as HTMLElement)?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA") return;
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key.length === 1 && /[a-zA-Z0-9]/.test(e.key)) {
+      const el = document.activeElement as HTMLElement;
+      if (el?.tagName === "INPUT" || el?.tagName === "TEXTAREA" || el?.isContentEditable) return;
+      if (e.key === "/") {
+        e.preventDefault();
         inputRef.current?.focus();
       }
     };

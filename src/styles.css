@@ -487,7 +487,9 @@ body,
 
 /* Hide fill style picker */
 [data-testid="style.fill"],
-.tlui-style-panel [class*="fill"] {
+[data-testid="style-panel.fill"],
+.tlui-style-panel__section:has([data-testid*="fill"]) [data-testid*="fill"],
+.tlui-toolbar:has(> [data-testid*="style.fill"]) {
   display: none !important;
 }
 
