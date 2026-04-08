@@ -279,7 +279,7 @@ export default function App() {
         className={`sidebar-divider ${sidebarCollapsed ? "collapsed" : ""}`}
         onMouseDown={handleDividerMouseDown}
       />
-      <div className="canvas-container">
+      <div className={`canvas-container ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
         {updateInfo && (
           <div className="update-banner">
             <span>TradeBoard {updateInfo.version} is available</span>

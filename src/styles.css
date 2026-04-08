@@ -411,8 +411,17 @@ body,
   background: var(--bg-hover);
 }
 
+/* When sidebar collapsed, pad tldraw left so it clears traffic lights */
+.canvas-container.sidebar-collapsed {
+  padding-left: 72px;
+}
+
 /* Make tldraw fill the container */
 .canvas-container .tl-container {
   position: absolute !important;
   inset: 0 !important;
+}
+
+.canvas-container.sidebar-collapsed .tl-container {
+  left: 72px !important;
 }
