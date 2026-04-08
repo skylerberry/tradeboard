@@ -395,6 +395,11 @@ body,
   contain: layout;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.canvas-container *::selection {
+  background: transparent;
 }
 
 /* Inline toggle in tldraw menu panel */
