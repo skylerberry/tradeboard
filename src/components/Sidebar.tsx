@@ -423,6 +423,7 @@ function TreeNode({
         <div
           className="context-menu"
           style={{ top: contextMenu.y, left: contextMenu.x }}
+          onClick={(e) => e.stopPropagation()}
         >
           <button onClick={() => { setEditing(true); setContextMenu(null); }}>
             Rename
