@@ -155,6 +155,17 @@ function SearchBar({
             setQuery("");
             inputRef.current?.blur();
           }
+          if (e.key === "Enter" && results.length > 0) {
+            const exact = results.find(
+              (n) => n.name.toLowerCase() === query.toLowerCase(),
+            );
+            const target = exact || (results.length === 1 ? results[0] : null);
+            if (target) {
+              onSelect(target.id);
+              setQuery("");
+              inputRef.current?.blur();
+            }
+          }
         }}
       />
       {focused && results.length > 0 && (
