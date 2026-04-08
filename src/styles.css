@@ -492,7 +492,10 @@ body,
 
 /* Hide tldraw license watermark */
 .tlui-layout__bottom__right .tlui-menu-zone__controls,
-a[href*="tldraw.dev"] {
+.tlui-layout__bottom__right > *:last-child,
+a[href*="tldraw.dev"],
+[class*="watermark"],
+[class*="license"] {
   display: none !important;
 }
 
