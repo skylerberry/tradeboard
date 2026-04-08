@@ -165,19 +165,27 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid transparent;
+  background: transparent;
   color: var(--text-secondary);
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.1s, color 0.1s;
+  transition: all 0.15s ease;
 }
 
 .sidebar-btn:hover {
-  background: var(--bg-hover);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
   color: var(--text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .sidebar-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .sidebar-btn.spin svg {
@@ -197,16 +205,21 @@ body,
 
 .sidebar-search-input {
   width: 100%;
-  height: 28px;
-  padding: 0 8px;
+  height: 30px;
+  padding: 0 10px;
   font-size: 12px;
   font-family: var(--font);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text);
   outline: none;
-  transition: border-color 0.15s;
+  transition: all 0.15s ease;
+}
+
+[data-theme="light"] .sidebar-search-input {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .sidebar-search-input::placeholder {
@@ -214,22 +227,37 @@ body,
 }
 
 .sidebar-search-input:focus {
-  border-color: #2383e2;
+  border-color: rgba(35, 131, 226, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(35, 131, 226, 0.15);
+}
+
+[data-theme="light"] .sidebar-search-input:focus {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 3px rgba(35, 131, 226, 0.12);
 }
 
 .sidebar-search-results {
   position: absolute;
   left: 8px;
   right: 8px;
-  top: 36px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  box-shadow: 0 4px 12px var(--shadow);
+  top: 38px;
+  background: rgba(40, 40, 40, 0.72);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
   z-index: 100;
   max-height: 200px;
   overflow-y: auto;
   padding: 4px;
+}
+
+[data-theme="light"] .sidebar-search-results {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
 .sidebar-search-result {
@@ -340,35 +368,47 @@ body,
   border-color: #2383e2;
 }
 
-/* Context menu */
+/* Context menu — liquid glass */
 .context-menu {
   position: fixed;
   z-index: 9999;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  background: rgba(40, 40, 40, 0.72);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
   padding: 4px;
-  box-shadow: 0 2px 8px var(--shadow), 0 0 1px var(--shadow);
-  min-width: 140px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 1px rgba(255, 255, 255, 0.1);
+  min-width: 160px;
+}
+
+[data-theme="light"] .context-menu {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.06);
 }
 
 .context-menu button {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 6px 10px;
+  padding: 7px 12px;
   font-size: 13px;
   font-family: var(--font);
   color: var(--text);
   background: none;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background 0.1s;
 }
 
 .context-menu button:hover {
-  background: var(--bg-hover);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .context-menu button:hover {
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .context-menu button.danger {
@@ -376,14 +416,7 @@ body,
 }
 
 .context-menu button.danger:hover {
-  background: var(--danger-bg);
-}
-
-.delete-confirm-label {
-  padding: 4px 10px;
-  font-size: 12px;
-  color: var(--danger);
-  font-weight: 500;
+  background: rgba(235, 87, 87, 0.15);
 }
 
 /* Canvas */
@@ -452,7 +485,7 @@ body,
   white-space: nowrap;
 }
 
-/* Update banner */
+/* Update banner — base layout */
 .update-banner {
   position: absolute;
   top: 12px;
@@ -462,40 +495,40 @@ body,
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 14px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: 0 2px 12px var(--shadow);
+  padding: 10px 16px;
   font-size: 13px;
   color: var(--text);
 }
 
 .update-banner button {
-  padding: 4px 12px;
+  padding: 6px 14px;
   font-size: 12px;
   font-family: var(--font);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background: #2383e2;
-  color: #fff;
   font-weight: 500;
-  transition: background 0.1s;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  background: rgba(35, 131, 226, 0.3);
+  color: #fff;
+  backdrop-filter: blur(10px);
+  transition: all 0.15s ease;
 }
 
 .update-banner button:hover {
-  background: #1a6fc4;
+  background: rgba(35, 131, 226, 0.45);
+  box-shadow: 0 2px 8px rgba(35, 131, 226, 0.25);
 }
 
 .update-banner button.dismiss {
-  background: none;
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-secondary);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .update-banner button.dismiss:hover {
+  background: rgba(255, 255, 255, 0.15);
   color: var(--text);
-  background: var(--bg-hover);
 }
 
 
@@ -505,6 +538,117 @@ body,
 .tlui-style-panel__section:has([data-testid*="fill"]) [data-testid*="fill"],
 .tlui-toolbar:has(> [data-testid*="style.fill"]) {
   display: none !important;
+}
+
+/* Delete modal — liquid glass */
+.delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-modal {
+  background: rgba(40, 40, 40, 0.72);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.25);
+  border-left-color: rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  padding: 24px 28px;
+  min-width: 280px;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+
+[data-theme="light"] .delete-modal {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-top-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+.delete-modal p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.delete-modal-sub {
+  font-size: 12px !important;
+  color: var(--text-secondary);
+  margin-top: 4px !important;
+}
+
+.delete-modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.glass-btn {
+  padding: 7px 20px;
+  font-size: 13px;
+  font-family: var(--font);
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+[data-theme="light"] .glass-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-top-color: rgba(255, 255, 255, 0.5);
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .glass-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.glass-btn.danger {
+  background: rgba(235, 87, 87, 0.2);
+  color: #ff6b6b;
+  border-color: rgba(235, 87, 87, 0.3);
+}
+
+.glass-btn.danger:hover {
+  background: rgba(235, 87, 87, 0.35);
+  box-shadow: 0 2px 12px rgba(235, 87, 87, 0.2);
+}
+
+/* Update banner — liquid glass */
+.update-banner {
+  background: rgba(40, 40, 40, 0.72) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top-color: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="light"] .update-banner {
+  background: rgba(255, 255, 255, 0.72) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* Hide disabled action buttons in tldraw toolbar */

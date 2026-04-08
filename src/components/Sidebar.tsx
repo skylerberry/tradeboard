@@ -298,6 +298,7 @@ function TreeNode({
 }) {
   const [expanded, setExpanded] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(false);
   const [dropPosition, setDropPosition] = useState<"before" | "after" | "inside" | null>(null);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -438,11 +439,25 @@ function TreeNode({
               </button>
             </>
           )}
-          <DeleteButton
-            name={node.name}
-            onConfirm={() => { setContextMenu(null); onDelete(node.id); }}
-            onCancel={() => setContextMenu(null)}
-          />
+          <button className="danger" onClick={() => {
+            setContextMenu(null);
+            setPendingDelete(true);
+          }}>
+            Delete
+          </button>
+        </div>
+      )}
+
+      {pendingDelete && (
+        <div className="delete-modal-overlay" onClick={() => setPendingDelete(false)}>
+          <div className="delete-modal" onClick={(e) => e.stopPropagation()}>
+            <p>Delete "<strong>{node.name}</strong>"?</p>
+            <p className="delete-modal-sub">This cannot be undone.</p>
+            <div className="delete-modal-actions">
+              <button className="glass-btn" onClick={() => setPendingDelete(false)}>Cancel</button>
+              <button className="glass-btn danger" onClick={() => { setPendingDelete(false); onDelete(node.id); }}>Delete</button>
+            </div>
+          </div>
         </div>
       )}
 
