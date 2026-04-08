@@ -129,7 +129,7 @@ body,
 }
 
 .sidebar-titlebar {
-  height: 40px;
+  height: 52px;
   position: relative;
   -webkit-app-region: drag;
 }
@@ -137,7 +137,7 @@ body,
 .sidebar-collapse-btn {
   -webkit-app-region: no-drag;
   position: absolute;
-  top: 10px;
+  top: 16px;
   left: 78px;
 }
 
