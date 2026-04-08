@@ -386,6 +386,8 @@ body,
   height: 100%;
   min-width: 0;
   contain: layout;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Inline toggle in tldraw menu panel */
