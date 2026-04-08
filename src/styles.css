@@ -495,6 +495,12 @@ body,
   display: none !important;
 }
 
+/* Hide disabled action buttons in tldraw toolbar */
+.tlui-toolbar__extras__controls button[data-state="disabled"],
+.tlui-toolbar__extras__controls button:disabled {
+  display: none !important;
+}
+
 /* Align tldraw top-left panel flush with sidebar divider */
 .canvas-container .tlui-layout__top__left {
   padding-left: 0 !important;
