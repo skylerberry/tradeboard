@@ -98,6 +98,9 @@ export default function App() {
     [sidebarWidth, sidebarCollapsed],
   );
 
+  const sidebarCollapsedRef = useRef(sidebarCollapsed);
+  sidebarCollapsedRef.current = sidebarCollapsed;
+
   const toggleSidebar = useCallback(() => {
     setSidebarCollapsed((c) => !c);
   }, []);
@@ -127,7 +130,9 @@ export default function App() {
     onToast((msg) => {
       setToast(msg);
       if (msg && !msg.includes("Downloading") && !msg.includes("Checking") && !msg.includes("Restarting")) {
-        setTimeout(() => setToast(""), 3000);
+        if (!sidebarCollapsedRef.current) {
+          setTimeout(() => setToast(""), 3000);
+        }
       }
     });
     onUpdatePrompt((ver, onConfirm) => {
@@ -257,8 +262,6 @@ export default function App() {
     editorRef.current?.user.updateUserPreferences({ colorScheme: theme });
   }, [theme]);
 
-  const sidebarCollapsedRef = useRef(sidebarCollapsed);
-  sidebarCollapsedRef.current = sidebarCollapsed;
   const toggleSidebarRef = useRef(toggleSidebar);
   toggleSidebarRef.current = toggleSidebar;
 
@@ -329,6 +332,9 @@ export default function App() {
         {sidebarCollapsed && toast && !updateInfo && (
           <div className="update-banner toast-banner">
             <span>{toast}</span>
+            <button className="dismiss" onClick={() => setToast("")}>
+              OK
+            </button>
           </div>
         )}
         {activeId ? (
